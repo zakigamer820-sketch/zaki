@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اعتذار ❤️</title>
+
+<style>
+body{
+margin:0;
+height:100vh;
+overflow:hidden;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#ff4d6d,#ff9a9e,#fad0c4);
+font-family:tahoma;
+color:white;
+text-align:center;
+}
+
+/* 💖 START BUTTON */
+.heartBtn{
+font-size:32px;
+border:none;
+background:none;
+cursor:pointer;
+animation:pulseHeart 1s infinite;
+}
+
+@keyframes pulseHeart{
+0%{transform:scale(1);}
+50%{transform:scale(1.3);}
+100%{transform:scale(1);}
+}
+
+/* 🐻❤️ BACKGROUND */
+.heartBg,.bearBg{
+position:absolute;
+font-size:30px;
+animation:float 8s linear infinite;
+opacity:0.7;
+pointer-events:none;
+}
+
+.bearBg{font-size:42px;}
+
+@keyframes float{
+0%{transform:translateY(100vh);}
+100%{transform:translateY(-120px);}
+}
+
+/* 📜 LYRICS */
+.lyrics{
+font-size:58px;
+font-weight:bold;
+text-shadow:0 0 25px #fff;
+margin-top:20px;
+}
+
+/* animations */
+.fromBottom{animation:fromBottom .6s ease-out;}
+@keyframes fromBottom{0%{transform:translateY(100px);opacity:0;}100%{transform:translateY(0);opacity:1;}}
+
+.fromTop{animation:fromTop .6s ease-out;}
+@keyframes fromTop{0%{transform:translateY(-100px);opacity:0;}100%{transform:translateY(0);opacity:1;}}
+
+.zoom{animation:zoom .5s ease-out;}
+@keyframes zoom{0%{transform:scale(0);opacity:0;}100%{transform:scale(1);opacity:1;}}
+
+/* 💥 BOOM */
+.boomExplosion{
+position:fixed;
+font-size:180px;
+font-weight:bold;
+z-index:99999;
+text-shadow:0 0 60px #fff,0 0 120px #ff4d6d;
+animation:boom 0.9s ease-out;
+transform:translate(-50%,-50%) scale(0);
+}
+
+@keyframes boom{
+0%{transform:translate(-50%,-50%) scale(0);}
+40%{transform:translate(-50%,-50%) scale(3);}
+100%{transform:translate(-50%,-50%) scale(0);}
+}
+
+/* shake */
+.quake{
+animation:quake 0.4s;
+}
+@keyframes quake{
+0%{transform:translate(0,0);}
+25%{transform:translate(12px,-12px);}
+50%{transform:translate(-12px,12px);}
+75%{transform:translate(12px,12px);}
+100%{transform:translate(0,0);}
+}
+
+/* FIREWORKS */
+.particle{
+position:fixed;
+width:8px;
+height:8px;
+border-radius:50%;
+animation:explode 1.5s ease-out forwards;
+z-index:9998;
+}
+
+@keyframes explode{
+0%{transform:translate3d(0,0,0) scale(1);opacity:1;}
+100%{transform:translate3d(var(--x),var(--y),0) scale(0);opacity:0;}
+}
+
+/* FINAL TEXT */
+.finalText{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+font-size:72px;
+font-weight:bold;
+color:#fff;
+text-shadow:
+0 0 10px #fff,
+0 0 20px #ff4d6d,
+0 0 40px #ff4d6d,
+0 0 80px #ff4d6d;
+animation:pulse 1.2s infinite;
+z-index:999999;
+}
+
+@keyframes pulse{
+0%{transform:translate(-50%,-50%) scale(1);}
+50%{transform:translate(-50%,-50%) scale(1.2);}
+100%{transform:translate(-50%,-50%) scale(1);}
+}
+
+button{
+padding:15px 30px;
+border:none;
+border-radius:30px;
+font-size:18px;
+font-weight:bold;
+background:white;
+color:#ff4d6d;
+cursor:pointer;
+}
+
+#main{display:none;}
+#forgive{display:none;}
+
+</style>
+</head>
+
+<body>
+
+<div id="start">
+<h1>🐻💖 رسالة لمريم القوية💖🐻</h1>
+
+<button class="heartBtn" onclick="start()">💖 افتحي وبلعي💖</button>
+</div>
+
+<div id="main">
+
+<h1>💞 مكلوبة هذي 💞</h1>
+
+<div class="lyrics" id="lyrics">🎵...</div>
+
+<div id="forgive">
+<h2>🥺 نتسامحوو 🤟🏻🤛🏻 ؟؟</h2>
+<button onclick="yes()">نعم ❤️</button>
+<button onclick="yes()">ايه وتبلعي وقيل تحوسي على لا 💖</button>
+</div>
+
+<audio id="song" src="zaki.mp3" loop></audio>
+<audio id="fireworksSound" src="fireworks.mp3"></audio>
+
+<div id="finalZone"></div>
+
+</div>
+
+<script>
+
+/* LYRICS */
+const lyrics=[
+{time:1.60,text:"💥 BOM BOM BOM BOM",type:"boom"},
+{time:3.70,text:"💖 منك ماجاني نووم",type:"bottom"},
+{time:5.30,text:"🥺 أجي عندي نتسامحو",type:"top"},
+{time:6.90,text:"👀 ويا كحلة العيون",type:"zoom"},
+{time:8.75,text:"💥 BOM BOM BOM BOM",type:"boom"},
+{time:10.80,text:"✨انتي تفاجي الهموم",type:"bottom"},
+{time:12.68,text:"❤️ علاش علينا نتخاصمو؟",type:"top"},
+{time:14.70,text:"💔 قلبي منك محرووم",type:"zoom"}
+];
+
+let i=0;
+
+/* START */
+function start(){
+
+document.getElementById("start").style.display="none";
+document.getElementById("main").style.display="block";
+
+let song=document.getElementById("song");
+song.play();
+
+/* BACKGROUND */
+setInterval(()=>{
+let h=document.createElement("div");
+h.className="heartBg";
+h.innerHTML=Math.random()>0.5?"❤️":"💖";
+h.style.left=Math.random()*100+"vw";
+document.body.appendChild(h);
+setTimeout(()=>h.remove(),8000);
+},300);
+
+setInterval(()=>{
+let b=document.createElement("div");
+b.className="bearBg";
+b.innerHTML="🐻";
+b.style.left=Math.random()*100+"vw";
+document.body.appendChild(b);
+setTimeout(()=>b.remove(),10000);
+},1500);
+
+song.ontimeupdate=()=>{
+
+let t=song.currentTime;
+
+if(i<lyrics.length && t>=lyrics[i].time){
+
+let el=document.getElementById("lyrics");
+el.innerHTML=lyrics[i].text;
+el.className="lyrics";
+
+if(lyrics[i].type==="bottom") el.classList.add("fromBottom");
+if(lyrics[i].type==="top") el.classList.add("fromTop");
+if(lyrics[i].type==="zoom") el.classList.add("zoom");
+
+if(lyrics[i].type==="boom") boomExplosion();
+
+i++;
+}
+
+if(i>=lyrics.length){
+document.getElementById("forgive").style.display="block";
+}
+};
+
+}
+
+/* 💥 BOOM */
+function boomExplosion(){
+
+let positions=[
+{left:"20%",top:"30%"},
+{left:"70%",top:"30%"},
+{left:"20%",top:"70%"},
+{left:"70%",top:"70%"}
+];
+
+for(let x=0;x<4;x++){
+
+setTimeout(()=>{
+
+let boom=document.createElement("div");
+boom.className="boomExplosion";
+boom.innerHTML="💖 مريم 💖";
+
+boom.style.left=positions[x].left;
+boom.style.top=positions[x].top;
+
+document.body.appendChild(boom);
+
+document.body.classList.add("quake");
+setTimeout(()=>document.body.classList.remove("quake"),400);
+
+setTimeout(()=>boom.remove(),900);
+
+},x*400);
+}
+
+}
+
+/* 🎆 YES FINAL */
+function yes(){
+
+document.getElementById("forgive").style.display="none";
+
+let fx=document.getElementById("fireworksSound");
+fx.currentTime=0;
+fx.loop=true;
+fx.play();
+
+/* FINAL TEXT */
+let final=document.createElement("div");
+final.className="finalText";
+final.innerHTML="💖 مكلوبتي الحلوة نبغيك يالكلبة❤️";
+document.getElementById("finalZone").appendChild(final);
+
+/* FIREWORKS 10 SECONDS */
+let interval=setInterval(()=>{
+
+for(let i=0;i<12;i++){
+
+let p=document.createElement("div");
+p.className="particle";
+
+p.style.left=Math.random()*100+"vw";
+p.style.top=Math.random()*100+"vh";
+
+p.style.setProperty("--x",(Math.random()*1200-600)+"px");
+p.style.setProperty("--y",(Math.random()*1200-600)+"px");
+
+p.style.background=Math.random()>0.5?"#fff":"#ff4d6d";
+
+document.body.appendChild(p);
+
+setTimeout(()=>p.remove(),1500);
+}
+
+},120);
+
+/* STOP EVERYTHING AFTER 10s */
+setTimeout(()=>{
+clearInterval(interval);
+fx.pause();
+fx.currentTime=0;
+},10000);
+
+}
+
+</script>
+
+</body>
+</html>
